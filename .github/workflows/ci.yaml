@@ -36,5 +36,6 @@ jobs:
     - name: Run tests
       run: go test ./...
 
-    - name: Build in Linux
+    - name: Build via Makefile
+      working-directory: ./morse-code
       run: make build-linux
