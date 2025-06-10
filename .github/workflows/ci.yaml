@@ -36,5 +36,5 @@ jobs:
     - name: Run tests
       run: go test ./...
 
-    - name: Build
-      run: go build -v ./...
+    - name: Build in Linux
+      run: make build-linux
