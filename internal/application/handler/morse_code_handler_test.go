@@ -1,10 +1,12 @@
-package domain
+package handler
 
 import (
 	"testing"
+
+	"github.com/MarcosViniciusPinho/morse-code/internal/application/dto"
 )
 
-func TestItShouldReturnAnErrorWhenAttemptingToGenerateTheOutput(t *testing.T) {
+func TestItShouldReturnAnErrorWhenAttemptingToGenerateTheOutputEncapsulatedInTheDto(t *testing.T) {
 	tests := []struct {
 		scenario string
 		input    string
@@ -13,38 +15,37 @@ func TestItShouldReturnAnErrorWhenAttemptingToGenerateTheOutput(t *testing.T) {
 		{
 			scenario: "Case 1",
 			input:    ".... . -.-B-   .-Y-- ..- -.. .A",
-			expected: "invalid input(.... . -.-B-   .-Y-- ..- -.. .A). Only Morse code following the standard provided table should be entered",
+			expected: "error trying to process morse code to text: invalid input(.... . -.-B-   .-Y-- ..- -.. .A). Only Morse code following the standard provided table should be entered",
 		},
 		{
 			scenario: "Case 2",
 			input:    "Ç.... . -.--  4 .--- F ..- G -.. . A",
-			expected: "invalid input(Ç.... . -.--  4 .--- F ..- G -.. . A). Only Morse code following the standard provided table should be entered",
+			expected: "error trying to process morse code to text: invalid input(Ç.... . -.--  4 .--- F ..- G -.. . A). Only Morse code following the standard provided table should be entered",
 		},
 		{
 			scenario: "Case 3",
 			input:    " Ç .... . -.--  Z .--- F ..-  G  -.. . A ",
-			expected: "invalid input( Ç .... . -.--  Z .--- F ..-  G  -.. . A ). Only Morse code following the standard provided table should be entered",
+			expected: "error trying to process morse code to text: invalid input( Ç .... . -.--  Z .--- F ..-  G  -.. . A ). Only Morse code following the standard provided table should be entered",
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.scenario, func(t *testing.T) {
-			morseCode := NewMorseCodeDomain(test.input)
-			err := morseCode.Process()
+			handler := NewMorseCodeHandler(dto.NewMorseCodeInputDTO(test.input))
+
+			outputDTO, err := handler.Process()
 			if err != nil && err.Error() != test.expected {
 				t.Errorf("input: %q\nexpected: %q", test.input, test.expected)
 			}
 
-			output := morseCode.GetOutput()
-			if len(output) > 0 {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, "", output)
+			if len(outputDTO.GetOutput()) > 0 {
+				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, "", outputDTO.GetOutput())
 			}
 		})
 	}
 }
 
-func TestItShouldGenerateTheOutputWithoutErrors(t *testing.T) {
-
+func TestItShouldGenerateTheOutputWithoutErrorsEncapsulatedInTheDTO(t *testing.T) {
 	tests := []struct {
 		scenario string
 		input    string
@@ -84,12 +85,11 @@ func TestItShouldGenerateTheOutputWithoutErrors(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.scenario, func(t *testing.T) {
-			morseCode := NewMorseCodeDomain(test.input)
-			_ = morseCode.Process()
+			handler := NewMorseCodeHandler(dto.NewMorseCodeInputDTO(test.input))
 
-			output := morseCode.GetOutput()
-			if output != test.expected {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, output)
+			outputDTO, _ := handler.Process()
+			if outputDTO.GetOutput() != test.expected {
+				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, outputDTO.GetOutput())
 			}
 		})
 	}
