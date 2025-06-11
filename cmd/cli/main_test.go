@@ -48,88 +48,58 @@ func TestItSshouldReturnAnErrorWhenAttemptingToGenerateMessageFromInvalidMorseCo
 	}
 }
 
-func TestItShouldReturnParameterCountErrorWwhenAttemptingToGenerateMessageFromMorseCode(t *testing.T) {
-	tests := []struct {
-		scenario string
-		input    string
-	}{
-		{
-			scenario: "Case 1",
-			input:    ".... . -.--   .--- ..- -.. .",
-		},
-		{
-			scenario: "Case 2",
-			input:    ".... . .-.. .-.. ---   .-- --- .-. .-.. -..",
-		},
-		{
-			scenario: "Case 3",
-			input:    ".... . .-.. .-.. ---   .-- --- .-. .-.. -..   .... . -.--   .--- ..- -.. .",
-		},
-		{
-			scenario: "Case 4",
-			input:    " .... . -.--   .--- ..- -.. . ",
-		},
-		{
-			scenario: "Case 5",
-			input:    "  ....  .  -.--   .---  ..-  -..  .  ",
-		},
-		{
-			scenario: "Case 6",
-			input:    "  ....  .  -.--",
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.scenario, func(t *testing.T) {
-			origArgs := os.Args
-			defer func() { os.Args = origArgs }()
-
-			os.Args = []string{"morse-code", test.input, "YO"}
-
-			logs, _ := captureLogs(main)
-
-			expected := "invalid command or number of parameters, it should be used as follows:"
-
-			if !strings.Contains(logs, expected) {
-				t.Fatalf("input: %q\nexpected field in logs: %q\nlogs: %s", test.input, expected, logs)
-			}
-		})
-	}
-}
-
 func TestItShouldReturnLogWithTheMorseCodeMessage(t *testing.T) {
 	tests := []struct {
 		scenario string
+		args     []string
 		input    string
 		expected string
 	}{
 		{
 			scenario: "Case 1",
+			args:     []string{"morse-code", ".... . -.--   .--- ..- -.. ."},
 			input:    ".... . -.--   .--- ..- -.. .",
 			expected: "HEY JUDE",
 		},
 		{
 			scenario: "Case 2",
+			args:     []string{"morse-code", ".... . .-.. .-.. ---   .-- --- .-. .-.. -.."},
 			input:    ".... . .-.. .-.. ---   .-- --- .-. .-.. -..",
 			expected: "HELLO WORLD",
 		},
 		{
 			scenario: "Case 3",
+			args:     []string{"morse-code", ".... . .-.. .-.. ---   .-- --- .-. .-.. -..   .... . -.--   .--- ..- -.. ."},
 			input:    ".... . .-.. .-.. ---   .-- --- .-. .-.. -..   .... . -.--   .--- ..- -.. .",
 			expected: "HELLO WORLD HEY JUDE",
 		},
 		{
 			scenario: "Case 4",
+			args:     []string{"morse-code", " .... . -.--   .--- ..- -.. . "},
 			input:    " .... . -.--   .--- ..- -.. . ",
 			expected: "HEY JUDE",
 		},
 		{
 			scenario: "Case 5",
+			args:     []string{"morse-code", "  ....  .  -.--   .---  ..-  -..  .  "},
 			input:    "  ....  .  -.--   .---  ..-  -..  .  ",
 			expected: "HEY JUDE",
 		},
 		{
 			scenario: "Case 6",
+			args:     []string{"morse-code", "  ....  .  -.--"},
+			input:    "  ....  .  -.--",
+			expected: "HEY",
+		},
+		{
+			scenario: "Case 7",
+			args:     []string{"morse-code", "  ....  .  -.--", "   "},
+			input:    "  ....  .  -.--",
+			expected: "HEY",
+		},
+		{
+			scenario: "Case 8",
+			args:     []string{"morse-code", "   ", "  ....  .  -.--"},
 			input:    "  ....  .  -.--",
 			expected: "HEY",
 		},
@@ -140,7 +110,7 @@ func TestItShouldReturnLogWithTheMorseCodeMessage(t *testing.T) {
 			origArgs := os.Args
 			defer func() { os.Args = origArgs }()
 
-			os.Args = []string{"morse-code", test.input}
+			os.Args = test.args
 
 			logs, _ := captureLogs(main)
 
