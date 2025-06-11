@@ -32,12 +32,12 @@ func TestItShouldReturnAnErrorWhenAttemptingToGenerateTheOutput(t *testing.T) {
 			morseCode := NewMorseCodeDomain(test.input)
 			err := morseCode.Process()
 			if err != nil && err.Error() != test.expected {
-				t.Errorf("input: %q\nexpected: %q", test.input, test.expected)
+				t.Fatalf("input: %q\nexpected: %q", test.input, test.expected)
 			}
 
 			output := morseCode.GetOutput()
 			if len(output) > 0 {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, "", output)
+				t.Fatalf("input: %q\nexpected: %q\ngot: %q", test.input, "", output)
 			}
 		})
 	}
@@ -89,7 +89,7 @@ func TestItShouldGenerateTheOutputWithoutErrors(t *testing.T) {
 
 			output := morseCode.GetOutput()
 			if output != test.expected {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, output)
+				t.Fatalf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, output)
 			}
 		})
 	}

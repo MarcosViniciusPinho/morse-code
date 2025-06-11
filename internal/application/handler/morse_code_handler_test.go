@@ -35,11 +35,11 @@ func TestItShouldReturnAnErrorWhenAttemptingToGenerateTheOutputEncapsulatedInThe
 
 			outputDTO, err := handler.Process()
 			if err != nil && err.Error() != test.expected {
-				t.Errorf("input: %q\nexpected: %q", test.input, test.expected)
+				t.Fatalf("input: %q\nexpected: %q", test.input, test.expected)
 			}
 
 			if len(outputDTO.GetOutput()) > 0 {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, "", outputDTO.GetOutput())
+				t.Fatalf("input: %q\nexpected: %q\ngot: %q", test.input, "", outputDTO.GetOutput())
 			}
 		})
 	}
@@ -89,7 +89,7 @@ func TestItShouldGenerateTheOutputWithoutErrorsEncapsulatedInTheDTO(t *testing.T
 
 			outputDTO, _ := handler.Process()
 			if outputDTO.GetOutput() != test.expected {
-				t.Errorf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, outputDTO.GetOutput())
+				t.Fatalf("input: %q\nexpected: %q\ngot: %q", test.input, test.expected, outputDTO.GetOutput())
 			}
 		})
 	}
